@@ -1,0 +1,4 @@
+
+* check file's information 
+   readelf -h <archive>.a | grep 'Class\|File\|Machine'
+   objdump -a file.a|grep 'file format'

@@ -1,0 +1,66 @@
+* Study org
+* setup pc site ssl
+** get openssl client code and modify
+   https://wiki.openssl.org/index.php/SSL/TLS_Client
+   DONE
+** setup nginx+openssl server
+   DONE
+   https://www.digitalocean.com/community/tutorials/how-to-create-an-ssl-certificate-on-nginx-for-ubuntu-14-04
+   https://www.feistyduck.com/library/openssl-cookbook/online/ch-openssl.html
+** test with choosed cihped
+   DONE TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+** study openssl
+   learn details about tls protocol handshake
+   http://www.jianshu.com/p/042dc1ba6815
+* github with CA problems soluation
+** Make sure first that you have certificates installed on your Debian in /etc/ssl/certs.If not, reinstall them:
+  sudo apt-get install --reinstall ca-certificates
+** Since that package does not include root certificates, add:
+  sudo mkdir /usr/local/share/ca-certificates/cacert.org
+  sudo wget -P /usr/local/share/ca-certificates/cacert.org http://www.cacert.org/certs/root.crt http://www.cacert.org/certs/class3.crt
+  sudo update-ca-certificates
+** Make sure your git does reference those CA:
+  git config --global http.sslCAinfo /etc/ssl/certs/ca-certificates.crt
+
+* debug with openssl
+** put .so under /usr/local/lib should using sudo ldconfig to enable
+   OPENSSL_LDFLAGS = -pthread -L $(OPENSSL_LIBDIR) -lssl -lcrypto -ldl
+** build with -g
+ ./config shared --prefix=/usr/local --openssldir=/home/andrew/Downlands/ssl -d
+
+**  error with 
+    /usr/bin/ld: cannot find -lefence  collect2: error: ld returned 1 exit status
+        sudo ln -s /usr/lib/i386-linux-gnu/gstreamer-0.10/libgstefence.so /usr/lib/libefence.so
+
+* study arm ssl
+** get mbed ssl code mbedtls-2.3
+** complie mbedtls as shared debug mode
+   just modify Makefile
+   由于 library 目录下的 Makefile 有 BUG，导致生成的动态库不能用，需要修改 library/Makefile 文件：
+   libmbedtls.${DLEXT}: $(OBJS)
+        echo "  LD    $@"
+        $(CC) -shared -Wl,-soname,$(SONAME) -o $@ $(OBJS) ${LDFLAGS} (将 ${LDFLAGS} 放到最后)
+
+   libmbedtls.dylib: $(OBJS)
+        echo "  LD    $@"
+	$(CC) -dynamiclib -o $@ $(OBJS) ${LDFLAGS} (将 ${LDFLAGS} 放到最后)
+** complie mbedtls for stm 32
+   http://hobbymc.blogspot.com/2011/02/stm32-discovery-porting-polar-ssl.html
+   
+   https://tls.mbed.org/discussions/generic/mbedtls-build-for-arm
+
+   scripts/config.pl unset MBEDTLS_NET_C
+   scripts/config.pl unset MBEDTLS_TIMING_C
+   scripts/config.pl unset MBEDTLS_FS_IO
+   CC=arm-none-eabi-gcc AR=arm-none-eabi-ar LD=arm-none-eabi-ld
+   
+   As you can see, we need to disable the network module and a few others, 
+   but since you want to use your own TCP/IP stack it's not a problem. 
+   You'll just need to provide read and write callbacks to the SSL/TLS layer with mbedtls_ssl_set_bio() 
+   it always works this way, the only difference is that you'll need to write the callbacks yourself
+   instead of using the ones provided in net.c
+   
+   arm-none-eabi-gcc --specs=rdimon.specs   -Wl,--start-group -lgcc -lc -lm -lrdimon -Wl,--end-group
+
+** Choose one config.h file . This is still an porblem!!! 
+

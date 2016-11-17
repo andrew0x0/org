@@ -1,4 +1,8 @@
 
 * check file's information 
    readelf -h <archive>.a | grep 'Class\|File\|Machine'
-   objdump -a file.a|grep 'file format'
+   objdump -a *.a|grep 'file format'
+
+* arm-none-eabi-gcc
+  --specs=nosys.specs
+#LD_FLAG += --specs=rdimon.specs -lgcc -lc -lm -lrdimon

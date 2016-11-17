@@ -1,0 +1,19 @@
+
+* AWS Iot 
+
+** MQTT client C sample
+
+mqttc.tls_set("./certs/root-CA.crt",
+              certfile="./certs/fa635d3140-certificate.pem.crt",
+              keyfile="./certs/fa635d3140-private.pem.key",
+              tls_version=ssl.PROTOCOL_TLSv1_2,
+              ciphers=None)
+
+mqttc.connect("a1dul237m8y7r3.iot.us-west-2.amazonaws.com", port=8883)  # AWS IoT service hostname and portno
+
+mqttc.subscribe("$aws/things/phodal/shadow/update/#",
+                qos=1)  # The names of these topics start with $aws/things/thingName/shadow."
+
+Received message from topic: $aws/things/phodal/shadow/update/accepted | QoS: 0 | Data Received:
+{"state":{"reported":{"led":true},"desired":{}},"metadata":{"reported":{"led":
+{"timestamp":1449146881}},"desired":{}},"version":2,"timestamp":1449146881}

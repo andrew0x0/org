@@ -14,7 +14,7 @@
    http://www.jianshu.com/p/042dc1ba6815
 * github with CA problems soluation
 ** Make sure first that you have certificates installed on your Debian in /etc/ssl/certs.If not, reinstall them:
-  sudo apt-get install --reinstall ca-certificates
+   sudo apt-get install --reinstall ca-certificates
 ** Since that package does not include root certificates, add:
   sudo mkdir /usr/local/share/ca-certificates/cacert.org
   sudo wget -P /usr/local/share/ca-certificates/cacert.org http://www.cacert.org/certs/root.crt http://www.cacert.org/certs/class3.crt
@@ -62,5 +62,71 @@
    
    arm-none-eabi-gcc --specs=rdimon.specs   -Wl,--start-group -lgcc -lc -lm -lrdimon -Wl,--end-group
 
-** Choose one config.h file . This is still an porblem!!! 
+
+** mbedtls CA
+    library/certs.c
+** CA
+   hostname  
+
+   https://tls.mbed.org/kb/how-to/generate-a-self-signed-certificate
+   
+*** server CA
+https://www.phildev.net/ssl/creating_ca.html
+http://my.oschina.net/itblog/blog/651434
+
+openssl req -new -key private/ec.key -out private/ca.csr -subj "/C=CN/ST=GD/L=SZ/O=ULU/OU=Root/CN=Root"
+
+openssl x509 -req -days 365 -extfile /etc/ssl/openssl.cnf -extensions v3_ca -signkey private/ec.key -in private/ca.csr -out certs/ca.cer
+
+openssl req -new -key private/ec1.key -out private/ca1.csr -subj "/C=CN/ST=GD/L=SZ/O=ULU/OU=RD/CN=CA1"
+
+openssl x509 -req -days 365  -extfile /etc/ssl/openssl.cnf -extensions v3_ca -CA certs/ca.cer -CAkey private/ec.key -CAserial ca.srl -CAcreateserial -in private/ca1.csr -out certs/ca1.cer
+
+openssl req -new -key private/srv.key -out private/srv.csr -subj "/C=CN/ST=GD/L=SZ/O=ULU/OU=RD/CN=192.168.1.99"
+
+openssl x509 -req -days 365  -extfile /etc/ssl/openssl.cnf -extensions v3_req -CA certs/ca1.cer -CAkey private/ec1.key -CAserial ca.srl -CAcreateserial -in private/srv.csr -out certs/srv.cer
+
+openssl req -new -key private/srv1.key -out private/srv1.csr -subj "/C=CN/ST=GD/L=SZ/O=ULU/OU=RD/CN=192.168.1.99"
+
+openssl x509 -req -days 365  -extfile /etc/ssl/openssl.cnf -extensions v3_req -CA certs/srv.cer -CAkey private/srv.key -CAserial ca.srl -CAcreateserial -in private/srv1.csr -out certs/srv1.cer
+
+** tls renegotiation 
+TLS记录的计数器溢出
+
+TLS内部将数据包装成记录，并为每个记录指定唯一的64位序列号。每当发生记录交换时，序列号就随之增长。一旦序列号接近溢出，协议就会强制执行重新协商。然而，因为这个计数器本身的数字就非常大，所以实践中不太可能出现溢出。
+
+2.2.3　会话恢复
+完整的握手协议非常复杂，需要很多握手消息和两次网络往返才能开始发送客户端应用数据。此外，握手执行的密钥学操作通常需要密集的CPU处理。身份验证通常以客户端和服务器证书验证（以及证书吊销检查）的形式完成，需要更多的工作。这其中的许多消耗都可以通过简短握手的方式节约下来。
+
+最初的会话恢复机制是，在一次完整协商的连接断开时，客户端和服务器都会将会话的安全参数保存一段时间。希望使用会话恢复的服务器为会话指定唯一的标识，称为会话ID。服务器在ServerHello消息中将会话ID发回客户端（请参见2.2.2节中的示例）。
+
+希望恢复早先会话的客户端将适当的会话ID放入ClientHello消息，然后提交。服务器如果愿意恢复会话，就将相同的会话ID放入ServerHello消息返回，接着使用之前协商的主密钥生成一套新的密钥，再切换到加密模式，发送Finished消息。客户端收到会话已恢复的消息以后，也进行相同的操作。这样的结果是握手只需要一次网络往返
+用来替代服务器会话缓存和恢复的方案是使用会话票证（sesession ticket）。它是2006年引入的（参见RFC 4507），随后在2008年进行了更新（参见RFC 5077）。使用这种方式，除了所有的状态都保持在客户端（与HTTP Cookie的原理类似）之外，其消息流与服务器会话缓存是一
+** Choose one config.h file . suite-B 
+
+*** check cert info
+    openssl x509 -in cert.pem -noout -text
+
+*** setup key pair
+    openssl ecparam -genkey -name secp256r1 | openssl ec -out ec.key -aes128
+
+* tls protocol
+
+** handshake
+1. 客户端发送 client_hello, 包含一个随机数 random1。
+2. 服务器回复 server_hello，包含一个随机数 random2，同时回复 certificate，携带了证书公钥P。
+3. 客户端收到random2之后，就能够生成 premaster_secrect 以及 master_secrect。
+  其中，premaster_secrect 长度为48个字节，前两个字节是协议版本号，剩下的46个字节填充一个随机数。结构如下：
+  Struct {byte Version[2]; bute random[46];} 
+ ** master_secrect 的生成算法简述如下
+  Master_key = PRF(premaster_secrect, "master secrect", 随机数1+随机数2) 
+  其中，PRF是一个随机函数，定义如下:
+  PRF(secrect, label, seed) = P_MD5(S1, label + seed) XOR P_SHA-1(S2, label + seed)
+而 master secrect 包含了6部分内容，分别是用于校验内容一致性的密钥，用于对称内容加解密的密钥，
+以及初始化向量(用于CBC模式)，客户端和服务器各一份，从上式可以看出，把premaster_key 赋值给 secrect， 
+master key 赋值给 label，客户端和服务器的两个随机数做种子就能确定地求出一个 48位长的随机数。
+4. 客户端使用证书公钥P将 premaster_secrect加密后发送给服务器。
+5. 服务器使用私钥解密得到 premaster_secrect，又由于服务端之前就接收了随机数1，所以服务器根据相同的生成算法，在相同的输入参数下，求出了相同了 master secrect。
+
+** key exchanged
 

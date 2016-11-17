@@ -1,0 +1,38 @@
+Root CA = private key + public key (both unique)
+Root CA Private key ----generate----> Root CA CSR file
+Root CA using private key+ Root CA's CSR file --selfsiged----> Root CA certificate(Root CA's public key inside)
+
+intermediate CA = private key + public key(both unqiue)
+intermediate CA Private key ----generate----> intermediate CA CSR file
+Root CA using private key+intermediate CA's CSR file --Root CAsiged----> intermediate CA certificate(intermediate CA's public key inside)
+
+server  = private key + public key(both unqiue)
+server Private key ----generate----> server  CSR file
+intermediate CA using private key+server CSR file --intermediate CA siged----> server's certificate(server's public key inside)
+
+client's CA = private key + public key(both unqiue)
+client's Private key ----generate----> client CA CSR file
+Root CA using private key+client CA's CSR file --Root CAsiged----> client CA certificate(client CA's public key inside)
+
+client  = private key + public key(both unqiue)
+client Private key ----generate----> client  CSR file
+client CA using private key+client CSR file --client CA siged----> client's certificate(client's public key inside)
+
+
+before connect
+Server had server's cer ,intermediate's cer,client CA's cer and itself's key pair.
+Client had Root CA's cer,client's cer and itself's key pair
+
+client verify server
+server send server and intermediate's cer to client
+client using Root CA's public key in Root's cer to verify intermediate CA's cer and get intermediate CA's public key
+client continue using intermediate CA's public key to verify server's cer and get server's public key 
+
+server verify client
+client send client's cer
+server using client CA's cer get client's public key 
+
+customer's issue
+each contract had one client's CA
+While customer's contract is termination , we just remove client's cer from server's trust host list then client can't connect to server anymore.
+When contract go into effect again, just need move client CA's cer back when client site don't need any steps. 

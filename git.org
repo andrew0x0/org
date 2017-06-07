@@ -1,0 +1,33 @@
+* github with CA problems soluation
+** Make sure first that you have certificates installed on your Debian in /etc/ssl/certs.If not, reinstall them:
+   sudo apt-get install --reinstall ca-certificates
+** Since that package does not include root certificates, add:
+  sudo mkdir /usr/local/share/ca-certificates/cacert.org
+  sudo wget -P /usr/local/share/ca-certificates/cacert.org http://www.cacert.org/certs/root.crt http://www.cacert.org/certs/class3.crt
+  sudo update-ca-certificates
+** troubleshoot
+ssh-keygen 產生出 id_rsa, id_rsa.pub, 已經都放到正確位置(.ssh), 但是連線時卻出現下述訊息:
+
+Agent admitted failure to sign using the key
+
+
+解法
+
+於自己的機器上, 執行 ssh-add, 會出現下述訊息.
+
+Identity added: /home/user/.ssh/id_rsa (/home/user/.ssh/id_rsa)
+** Make sure your git does reference those CA:
+  git config --global http.sslCAinfo /etc/ssl/certs/ca-certificates.crt
+  
+* git
+	
+If the add-apt-repository command doesn't work, you need to add the python-software-properties package first. Combined you would do:
+sudo apt-get install software-properties-common
+sudo apt-get install python-software-properties
+sudo add-apt-repository ppa:git-core/ppa
+sudo apt-get update
+sudo apt-get install git
+git --version
+
+* github delete branch
+     git push  origin:mqtls  

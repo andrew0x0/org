@@ -128,7 +128,7 @@ subscribe_publish_sample
 	mbedtls_ssl_config_free(&(tlsDataParams->conf));
 	mbedtls_ctr_drbg_free(&(tlsDataParams->ctr_drbg));
 	mbedtls_entropy_free(&(tlsDataParams->entropy));
-
+	
 ** aws_iot_mqtt_connect
 *** aws_iot_mqtt_get_client_state 
 *** _aws_iot_mqtt_is_client_state_valid_for_connect

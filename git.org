@@ -30,4 +30,8 @@ sudo apt-get install git
 git --version
 
 * github delete branch
-     git push  origin:mqtls  
+     git push  origin:mqtls
+  
+* git submodule
+     git submodule init
+	 git submodule update

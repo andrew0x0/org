@@ -100,8 +100,12 @@ openssl x509 -req -days 365  -extfile /etc/ssl/openssl.cnf -extensions v3_req -C
 
 openssl req -new -key private/srv1.key -out private/srv1.csr -subj "/C=CN/ST=GD/L=SZ/O=ULU/OU=RD/CN=192.168.1.99"
 openssl req -new -key private/cli0.key -out private/cli0.csr -subj "/C=CN/ST=GD/L=SZ/O=ULU/OU=RD/CN=Andrew"
+openssl req -new -key private/device2.key -out private/device2.csr -subj "/C=CN/ST=GD/L=SZ/O=ULU/OU=RD/CN=ULU Device2"
+
 openssl x509 -req -days 365  -extfile /etc/ssl/openssl.cnf -extensions v3_req -CA certs/srv.cer -CAkey private/srv.key -CAserial ca.srl -CAcreateserial -in private/srv1.csr -out certs/srv1.cer
 openssl x509 -req -days 365  -extfile /etc/ssl/openssl.cnf -extensions v3_req -CA certs/client_root.cer -CAkey private/client_root.key -CAserial ca.srl -CAcreateserial -in private/cli0.csr -out certs/cli0.cer
+
+
 ** tls renegotiation 
    TLS记录的计数器溢出
 
@@ -174,3 +178,10 @@ $ openssl req -new -sha256 \
     -config <(cat /etc/pki/tls/openssl.cnf \
         <(printf "[SAN]\nsubjectAltName=DNS:www.ustack.in,DNS:www.test.ustack.com")) \
     -out ustack.csr
+
+openssl req -new -sha256 \
+        -key private/server.key -out private/server.csr -subj "/C=CN/ST=GD/L=SZ/O=ULU/OU=RD/CN=mqttpipe.ulu.io" \
+        -reqexts SAN \
+        -config <(cat ../openssl.cnf \
+           <(printf "[SAN]\nsubjectAltName=IP.1:119.139.199.35,IP.2:172.31.15.48")) \
+        -out certs/server.cer

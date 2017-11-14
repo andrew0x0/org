@@ -147,8 +147,41 @@ subscribe_publish_sample
 ** aws_iot_mqtt_autoreconnect_set_status
 ** aws_iot_mqtt_subscribe
 *** iot_subscribe_callback_handler
+**** _aws_iot_mqtt_internal_subscribe(pClient, pTopicName, topicNameLen, qos,pApplicationHandler, pApplicationHandlerData);
+***** _aws_iot_mqtt_serialize_subscribe(, , , , , &pTopicName, &topicNameLen, &qos, &serializedLen);
+****** 	init_timer(&timer);countdown_ms(&timer, pClient->clientData.commandTimeoutMs); 
+****** aws_iot_mqtt_get_next_packet_id(pClient);
+****** _aws_iot_mqtt_serialize_subscribe
+****** _aws_iot_mqtt_get_free_message_handler_index(pClient);
+******  aws_iot_mqtt_internal_send_packet(pClient, serializedLen, &timer);
+******  aws_iot_mqtt_internal_wait_for_read(pClient, SUBACK, &timer);
+****** _aws_iot_mqtt_deserialize_suback(&rxPacketId, 1, &count, grantedQoS, pClient->clientData.readBuf,pClient->clientData.readBufSize);
+****** 	pClient->clientData.messageHandlers[indexOfFreeMessageHandler].pApplicationHandler =pApplicationHandler;
 ** while
 *** aws_iot_mqtt_yield
+**** 	clientState = aws_iot_mqtt_get_client_state(pClient);
+**** rc = aws_iot_mqtt_set_client_state(pClient, CLIENT_STATE_CONNECTED_IDLE,
+										   CLIENT_STATE_CONNECTED_YIELD_IN_PROGRESS);
+**** yieldRc = _aws_iot_mqtt_internal_yield(pClient, timeout_ms);
+*****  aws_iot_mqtt_internal_cycle_read(pClient, &timer, &packet_type);
+****** DONE rc = _aws_iot_mqtt_internal_read_packet(pClient, pTimer, pPacketType);
+****** _aws_iot_mqtt_internal_handle_publish
+****** 	rc = aws_iot_mqtt_internal_deserialize_publish(&msg.isDup, &msg.qos, &msg.isRetained,
+												   &msg.id, &topicName, &topicNameLen,
+												   (unsigned char **) &msg.payload, &msg.payloadLen,
+												   pClient->clientData.readBuf,
+												   pClient->clientData.readBufSize);
+****** rc = _aws_iot_mqtt_internal_deliver_message(pClient, topicName, topicNameLen, &msg);
+******* pClient->clientData.messageHandlers[itr].pApplicationHandler(pClient, pTopicName, topicNameLen,
+			pMessageParams,
+			Client->clientData.messageHandlers[itr].pApplicationHandlerData);
+****** rc = aws_iot_mqtt_internal_serialize_ack(pClient->clientData.writeBuf, pClient->clientData.writeBufSize,
+											 PUBACK, 0, msg.id, &len);
+****** rc = aws_iot_mqtt_internal_send_packet(pClient, len, pTimer);
+*****  _aws_iot_mqtt_keep_alive(pClient);
+**** rc = aws_iot_mqtt_set_client_state(pClient, CLIENT_STATE_CONNECTED_YIELD_IN_PROGRESS,
+										   CLIENT_STATE_CONNECTED_IDLE);
+
 *** aws_iot_mqtt_publish
 **** QOS need code to implementation
      

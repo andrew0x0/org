@@ -35,3 +35,10 @@ git --version
 * git submodule
      git submodule init
 	 git submodule update
+
+git clone git@github.com:nutzam/nutz --depth=1
+
+git merge --no-commint
+
+git commit --amend --date=
+

@@ -1,0 +1,108 @@
+* mbedtls_ssl_handshake_client_step
+** ssl_write_client_hello
+***     if( ssl->conf->f_rng == NULL )
+*** ssl_generate_random
+mbedtls_time
+mbedtls_ssl_conf_rng(&(tlsDataParams->conf), mbedtls_ctr_drbg_random, &(tlsDataParams->ctr_drbg));
+int mbedtls_ctr_drbg_random( void *p_rng, unsigned char *output, size_t output_len )
+    ret = mbedtls_ctr_drbg_random_with_add( ctx, output, output_len, NULL, 0 );
+mbedtls_ctr_drbg_reseed
+mbedtls_aes_crypt_ecb
+ ctr_drbg_update_internal
+ /*
+         * Copy random block to destination
+         */
+   memcpy( p, tmp, use_len );
+ATCA_STATUS atcatls_random(uint8_t* randout)
+       
+***     ssl_write_supported_elliptic_curves_ext( ssl, p + 2 + ext_len, &olen );
+***     ssl_write_supported_point_formats_ext( ssl, p + 2 + ext_len, &olen );
+***  mbedtls_ssl_write_record
+
+
+** ssl_parse_server_hello
+*** mbedtls_ssl_read_record
+*** mbedtls_ssl_read_version
+*** mbedtls_ssl_derive_keys
+    if( ssl->minor_ver == MBEDTLS_SSL_MINOR_VERSION_3 )
+    {
+        handshake->tls_prf = tls_prf_sha256;
+        handshake->calc_verify = ssl_calc_verify_tls_sha256;
+        handshake->calc_finished = ssl_calc_finished_tls_sha256;
+    }
+
+    ssl->handshake->calc_verify( ssl, session_hash );
+
+** mbedtls_ssl_parse_certificate
+
+***     if( ( ssl->session_negotiate->peer_cert = mbedtls_calloc( 1,
+***     mbedtls_x509_crt_init( ssl->session_negotiate->peer_cert );
+***         ret = mbedtls_x509_crt_parse_der( ssl->session_negotiate->peer_cert,
+**** x509_crt_parse_der_core
+***         ret = mbedtls_x509_crt_verify_with_profile(
+**** x509_crt_check_parent
+**** x509_crt_verify_child
+**** x509_crt_verify_top
+****         if( mbedtls_ssl_check_cert_usage( ssl->session_negotiate->peer_cert,
+
+***             if( mbedtls_pk_can_do( pk, MBEDTLS_PK_ECKEY )
+***             mbedtls_ssl_check_curve( ssl, mbedtls_pk_ec( *pk )->grp.id ) != 0 )
+***         if( mbedtls_ssl_check_cert_usage( ssl->session_negotiate->peer_cert,
+
+** ret = ssl_parse_server_key_exchange( ssl );
+
+***          if( ( ret = ssl_get_ecdh_params_from_cert( ssl ) ) != 0 )
+
+**** mbedtls_pk_can_do
+**** mbedtls_pk_ec
+****     if( ( ret = mbedtls_ecdh_get_params( &ssl->handshake->ecdh_ctx, peer_key,
+
+****     if( ssl_check_server_ecdh_params( ssl ) != 0 )
+
+*****     curve_info = mbedtls_ecp_curve_info_from_grp_id( ssl->handshake->ecdh_ctx.grp.id );
+*****     if( mbedtls_ssl_check_curve( ssl, ssl->handshake->ecdh_ctx.grp.id ) != 0 )
+		  
+
+****         if( mbedtls_ssl_ciphersuite_uses_server_signature( ciphersuite_info ) )
+****             if( ssl_parse_signature_algorithm( ssl, &p, end,                                               &md_alg, &pk_alg ) != 0 )
+****             if( pk_alg != mbedtls_ssl_get_ciphersuite_sig_pk_alg( ciphersuite_info ) )
+
+****             if( ( ret = mbedtls_md_setup( &ctx,
+****             mbedtls_md_starts( &ctx );
+            mbedtls_md_update( &ctx, ssl->handshake->randbytes, 64 );
+            mbedtls_md_update( &ctx, params, params_len );
+            mbedtls_md_finish( &ctx, hash );
+            mbedtls_md_free( &ctx );
+
+****         if( ! mbedtls_pk_can_do( &ssl->session_negotiate->peer_cert->pk, pk_alg ) )
+****         if( ( ret = mbedtls_pk_verify( &ssl->session_negotiate->peer_cert->pk,
+
+**            ret = ssl_parse_certificate_request( ssl );
+**  ssl_parse_server_hello_done
+** int mbedtls_ssl_write_certificate( mbedtls_ssl_context *ssl )
+***     crt = mbedtls_ssl_own_cert( ssl );
+** ssl_write_client_key_exchange
+*** mbedtls_ecdh_make_public
+****     if( ( ret = mbedtls_ecdh_gen_public( &ctx->grp, &ctx->d, &ctx->Q, f_rng, p_rng ) )
+****  mbedtls_ecp_tls_write_point
+*** mbedtls_ecdh_calc_secret
+**** if( ( ret = mbedtls_ecdh_compute_shared( &ctx->grp, &ctx->z, &ctx->Qp, &ctx->d,
+****     return mbedtls_mpi_write_binary( &ctx->z, buf, *olen );
+** ssl_write_certificate_verify
+*** mbedtls_ssl_derive_keys
+***         ssl->out_msg[5] = mbedtls_ssl_sig_from_pk( mbedtls_ssl_own_key( ssl ) );
+***     if( ( ret = mbedtls_pk_sign( mbedtls_ssl_own_key( ssl ), md_alg, hash_start, hashlen,
+
+** mbedtls_ssl_write_change_cipher_spec
+**  mbedtls_ssl_write_finished
+*** ssl->handshake->calc_finished( ssl, ssl->out_msg + 4, ssl->conf->endpoint );
+
+** mbedtls_ssl_parse_finished
+***     ssl->handshake->calc_finished( ssl, buf, ssl->conf->endpoint ^ 1 );
+* mbedtls_ssl_write
+
+** ssl_write_real
+
+*** mbedtls_ssl_write_record
+
+**** ssl_encrypt_buf

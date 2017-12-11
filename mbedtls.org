@@ -1,3 +1,4 @@
+
 * mbedtls_ssl_handshake_client_step
 ** ssl_write_client_hello
 ***     if( ssl->conf->f_rng == NULL )
@@ -12,7 +13,7 @@ mbedtls_aes_crypt_ecb
  /*
          * Copy random block to destination
          */
-   memcpy( p, tmp, use_len );
+memcpy( p, tmp, use_len );
 ATCA_STATUS atcatls_random(uint8_t* randout)
        
 ***     ssl_write_supported_elliptic_curves_ext( ssl, p + 2 + ext_len, &olen );
@@ -30,7 +31,6 @@ ATCA_STATUS atcatls_random(uint8_t* randout)
         handshake->calc_verify = ssl_calc_verify_tls_sha256;
         handshake->calc_finished = ssl_calc_finished_tls_sha256;
     }
-
     ssl->handshake->calc_verify( ssl, session_hash );
 
 ** mbedtls_ssl_parse_certificate

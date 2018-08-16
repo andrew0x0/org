@@ -57,7 +57,30 @@ commit changes to submodule (push to submodule, then to superproject)
 - git add/commit
 - git push --recurse-submodule=check/on-demand
 
+A example of how I use git submodules.
 
+Creates a new repo
+Then clones another repo as submodule
+Then we have that submodule use a tag called V3.1.2
+And then we commit
+And that looks a little bit like this:
+
+git init 
+vi README
+git add README
+git commit 
+git submodule add git://github.com/XXXXX/xxx.yyyy.git stm32_std_lib
+git status
+
+git submodule init
+git submodule update
+
+cd stm32_std_lib/
+git reset --hard V3.1.2 
+cd ..
+git commit -a
+
+git submodule status 
 
 * git diffall
 使用git difftool （git mergetool）
@@ -92,3 +115,21 @@ sudo ln -s /home/ubuntu/customization/os/git-diffall.sh /bin/git-diffall
 git config --global diff.tool meld #这一行必须配置，否则diffall不知道该使用哪个diff程序
 git config –global alias.diffall git-diffall
  
+* git checkout from
+    git checkout tags/<tag_name> -b <branch_name>
+    git checkout -b <branch_name> remotes/origin/***
+
+* tags?
+# list all tags
+git tag
+
+# list all tags with given pattern ex: v-
+git tag --list 'v-*'
+How to create tags?
+There are 2 ways to create a tag:
+
+# normal tag 
+git tag 
+
+# annotated tag
+git tag -a

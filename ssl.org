@@ -129,8 +129,24 @@ TLS内部将数据包装成记录，并为每个记录指定唯一的64位序列
     openssl ecparam -genkey -name prime256v1 | openssl ec -out ec.key -aes128
    openssl ecparam -out test.pem -name prime256v1 -genkey
  
-* tls protocol
+*** convert key formats
+#提取密钥公钥到单独的文件
+openssl rsa -in rsakey0.pem -pubout -out rsakey0.pub    
 
+#转换密钥格式(DER->PEM)
+openssl rsa -in rsakeypair.der -inform DER -out rsakeypair.pem 
+
+#改加密算法，移除密码保护
+openssl rsa -in rsakeypair.pem -passin pass:123456  -des3 -out rsakeypair1.pem
+
+从私钥重新生成OpenSSH格式公钥
+ssh-keygen -y -f priKey.pem   > sshPubkey.pub
+将OpenSSL格式公钥转换成OpenSSH格式
+ssh-keygen -i -m PKCS8 -f sslPubKey.pub 〉 sshPubKey.pub    #-m支持 PEM，PKCS8，RFC4716
+将OpenSSH格式公钥转换成OpenSSL格式公钥
+ssh-keygen -e -m PEM -f sshPubKey.pub >sslPubKey.pub        #-m支持 PEM，PKCS8，RFC4716
+* tls protocol
+  
 ** handshake
 1. 客户端发送 client_hello, 包含一个随机数 random1。
 2. 服务器回复 server_hello，包含一个随机数 random2，同时回复 certificate，携带了证书公钥P。

@@ -33,3 +33,4 @@ sudo mount -t vboxsf gongxiang /mnt/shared
 
 * indent
 C-u M-|indent RET
+astyle --style=stroustrup -A4 --indent=spaces=8 firmware/storage.c 

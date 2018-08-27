@@ -1,0 +1,14 @@
+            Generate signatures of firmware:
+                python bootloader/firmware_sign.py -s -f ./firmware/trezor.bin
+    
+            Get Metadata only from firmware with SIG
+                cp ./firmware/trezor.bin ./firmware/metadata.bin
+                python bootloader/firmware_sign.py -m -f ./firmware/metadata.bin
+    
+            Get pure firmware only from firmware with SIG
+                cp ./firmware/trezor.bin ./firmware/trezor.bk
+                python bootloader/firmware_sign.py -fw -f ./firmware/trezor.bin
+
+openssl dgst -sha256 trezor.bin 
+openssl dgst -sha256 metadata.bin 
+openssl dgst -sha256 ./bootloader.bin 

@@ -1,10 +1,10 @@
-compile emacs 25 on ubuntu14.04
+compile emacs 26 on ubuntu18.04
 
 sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev
 # for gtk3 build replace libgtk2.0-dev with libgtk-3-dev
 
 git clone --depth=1 git://git.savannah.gnu.org/emacs.git
 ./autogen.sh # not needed when installing from tarball
-./configure
+./configure --prefix=/usr/local/emacs --with-gnutls=no --with-mailutils
 make bootstrap
 sudo make install

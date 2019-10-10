@@ -28,7 +28,7 @@ Notice: only versions that support UDP relay support this feature.
 find /home/andrew/velio/vdm2-firmware/src -path "/home/andrew/velio/vdm2-firmware/src/aws-iot-device-sdk-embedded-C" -prune -o  -path "/home/andrew/velio/vdm2-firmware/src/mbedtls" -prune -o -path "/home/andrew/velio/vdm2-firmware/src/mot/iot/include/aws_iot_json_utils.h" -prune -o -path "/home/andrew/velio/vdm2-firmware/src/mot/mbedtls/library/network.c" -prune -o -path "/home/andrew/velio/vdm2-firmware/src/mot/mbedtls/library/net_sockets.c" -prune -o -path "/home/andrew/velio/vdm2-firmware/src/mot/mbedtls/include/mbedtls/network.h" -prune -o -path "/home/andrew/velio/vdm2-firmware/src/mot/mbedtls/include/mbedtls/config.h" -prune -o -name "*.[chs]" -print > cscope.files
 
 * vitrual box
-sudo mount -t vboxsf gongxiang /mnt/shared
+add user to /etc/group vboxsf to auto-mount sf_share under /media
 
 
 * indent

@@ -162,3 +162,27 @@ zhangzhi@moke:~/code/demo$git push origin :refs/tags/V1.2
 如何获取远程版本:
 
 zhangzhi@moke:~/code/demo$git fetch origin tag V1.2
+
+* git proxy
+//通过 http 链接 clone 代码时走 socks5 代理
+git config --global http.proxy "socks5://127.0.0.1:6666"
+//通过 https 链接 clone 代码时走 socks5代理
+git config --global https.proxy "socks5://127.0.0.1:6666"
+
+
+# 这里必须是 github.com，因为这个跟我们 clone 代码时的链接有关
+Host github.com
+   # 如果用默认端口，这里是 github.com，如果想用443端口，这里就是 ssh.github.com 详见 https://help.github.com/articles/using-ssh-over-the-https-port/
+   HostName github.com
+   User git
+   # 如果是 HTTP 代理，把下面这行取消注释，并把 proxyport 改成自己的 http 代理的端口
+   # ProxyCommand socat - PROXY:127.0.0.1:%h:%p,proxyport=6667
+   # 如果是 socks5 代理，则把下面这行取消注释，并把 6666 改成自己 socks5 代理的端口
+   # ProxyCommand nc -v -x 127.0.0.1:6666 %h %p
+
+终端 terminal
+在 .bashrc 或 .zshrc 中设置如下内容
+
+alias setproxy="export ALL_PROXY=socks5://127.0.0.1:1080"
+alias unsetproxy="unset ALL_PROXY"
+alias ip="curl -i http://ipinfo.io"

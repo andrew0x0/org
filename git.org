@@ -186,3 +186,9 @@ Host github.com
 alias setproxy="export ALL_PROXY=socks5://127.0.0.1:1080"
 alias unsetproxy="unset ALL_PROXY"
 alias ip="curl -i http://ipinfo.io"
+
+* setup git 
+1) mkdir .ssh copy private key && chmod 400
+2) sudo apt install git
+3)  ssh-add ~/.ssh/id_
+4) ssh -T git@github.com

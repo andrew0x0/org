@@ -34,3 +34,17 @@ add user to /etc/group vboxsf to auto-mount sf_share under /media
 * indent
 C-u M-|indent RET
 astyle --style=stroustrup -A4 --indent=spaces=8 firmware/storage.c 
+
+* v2ray setup in ubuntu
+wget https://install.direct/go.sh
+sudo bash go.sh
+copy client.json @tizitizi.tk/client.json to /etc/v2ray/config.json
+sudo service v2ray start
+
+终端 terminal
+在 .bashrc 或 .zshrc 中设置如下内容
+
+alias setproxy="export ALL_PROXY=socks5://127.0.0.1:10808"
+alias unsetproxy="unset ALL_PROXY"
+alias ip="curl -i http://ipinfo.io"
+

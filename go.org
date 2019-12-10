@@ -1,0 +1,64 @@
+* install 
+using root account
+https://golang.org/dl/
+wget https://dl.google.com/go/go1.13.5.linux-amd64.tar.gz
+tar -c /usr/local -xzf 
+export PATH=$PATH:/usr/local/go/bin
+* proxy is needed
+both http and https needed
+* emacs_go
+测试. 创建 hello.go, 输入以下代码:
+
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Printf("hello, world\n")
+}
+在终端执行:
+
+go run hello.go
+# 输出 hello, world 则说明正确安装.
+配置
+goimports
+goimports 命令能自动格式化代码, 自动添加和移除imports, 而且与Emacs集成良好.
+
+# git  clone https://github.com/golang/tools.git
+go get golang.org/x/tools/cmd/goimports
+gocode
+gocode 命令能为代码自动补全提供后台支持, 是Emacs下Go代码补全不可少的后台.
+
+go get github.com/nsf/gocode
+godef
+godef 命令能在Go源码变量, 函数定义之间跳转.
+
+go get github.com/rogpeppe/godef
+Emacs配置
+安装go-mode
+M-x package-list-packages, 找到 go-mode, 安装.
+
+如果当前的MELPA不可用, 重新配置一个新的源.
+
+(add-to-list 'package-archives
+'("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
+添加自动格式化的hook
+需要先安装 goimports 命令.
+
+;; Call Gofmt before saving
+ (setq gofmt-command "goimports")
+ (add-hook 'before-save-hook 'gofmt-before-save)
+配置自动补齐
+需要先安装 gocode 命令.
+
+;;autocomplete
+(set (make-local-variable 'company-backends) '(company-go))
+(company-mode)
+配置自动跳转
+需要先安装 godef 命令.
+
+;; Godef jump key binding
+ (local-set-key (kbd "M-,") 'godef-jump)
+ (local-set-key (kbd "M-.") 'pop-tag-mark)
+* emacs_go two
+

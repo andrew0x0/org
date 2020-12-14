@@ -1,0 +1,1 @@
+remoteassistant-adapter 编译需要protobuf 3.9 

@@ -1,0 +1,17 @@
+* TODO openssl 靜態編譯和 鏈接 
+** build with -g
+将ssl安装在本用户目录下 make install时不需要sudo 
+ ./config shared --prefix=/home/andrew/Downlands/ssl -d
+
+修改/etc/ld.so.conf,在第一行增加lib 文件位置
+sudo ldconfig -v
+
+* TODO EVP調用aes-128-gcm 完成aes加解密
+* TODO 部署調試remote-ubuntu相關代碼
+* TODO 嵌入aes加解密部分
+* TODO 設計部署驗證remote 端的加解密功能
+
+* 相關note
+
+** openssl 確認使用EVP會調用AES-NI硬件加速
+*** grep aes /proc/cpuinfo

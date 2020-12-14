@@ -38,7 +38,11 @@ Identity added: /home/user/.ssh/id_rsa (/home/user/.ssh/id_rsa)
 ** put .so under /usr/local/lib should using sudo ldconfig to enable
    OPENSSL_LDFLAGS = -pthread -L $(OPENSSL_LIBDIR) -lssl -lcrypto -ldl
 ** build with -g
- ./config shared --prefix=/usr/local --openssldir=/home/andrew/Downlands/ssl -d
+将ssl安装在本用户目录下 make install时不需要sudo 
+ ./config shared --prefix=/home/andrew/Downlands/ssl -d
+
+修改/etc/ld.so.conf,在第一行增加lib 文件位置
+sudo ldconfig -v
 
 **  error with 
     /usr/bin/ld: cannot find -lefence  collect2: error: ld returned 1 exit status

@@ -1,1 +1,52 @@
-remoteassistant-adapter 编译需要protobuf 3.9 
+* remoteassistant-adapter 编译需要protobuf 3.9  
+* remoteassistant-ubuntu
+** main
+*** remote_takeover_init
+**** init value of s_remote_takeover 
+**** memset zero to  <global>[136]   uint8_t send_buffer[2048];
+*** remote_takeover_start
+**** pthread_create
+***** work_thread
+****** Camera
+    // camera初始化
+    CamRC_Init();
+    CamRC_AddCam("192.168.8.112");
+    CamRC_AddCam("192.168.8.113");
+****** PID初始化
+    pid_init();
+    pid_set_point(2.0f);
+****** vehicle_hal_init
+****** udp_server_init
+****** udp_server_set_listener
+****** udp_server_start
+****** if (1 == s_remote_takeover.auto_switcher_enabled) 
+******* takeover_notify_control
+******  security mode
+decision_acquire_execution(AUTO_DRIVE)
+security_get_instance
+security_start
+******     s_remote_takeover.status = REMOTE_TAKEOVER_STATUS_NONE;
+******     while (0 == s_remote_takeover.stop) 
+*******  do_center_login()
+******* do_center_update_status()
+******** center_update_status
+********* http json balabala
+    int handler = http_client_get_instance();
+    char *json_string = update_status_req_to_json_string(req);
+    int ret = http_client_post(handler, s_center_url, json_string, &mem);
+    ret = json_string_to_update_status_resp((char *)mem.memory, resp);
+********  // takeover
+*********   vehicle_hal_rpc_polling_request 
+build_data
+udp_client_send
+build_resp_hint_data
+rpc_recv
+parse_resp
+********* do_center_task_query 
+do_center_takeover
+center_takeover
+
+*** while(1)
+**** remote_takeover_status
+**** remote_takeover_running
+*** remote_takeover_stop

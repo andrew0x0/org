@@ -137,6 +137,8 @@ git tag -a
 但是目前这个标签仅仅是提交到了本地git仓库.如何同步到远程代码库
 
 tag 远程推送:
+单个tag
+git push orign [tag_name]
 
 zhangzhi@moke:~/code/demo$git push origin --tags
 这样我们就把本地版本推送到了远程代码仓库.

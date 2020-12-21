@@ -119,6 +119,22 @@ git config –global alias.diffall git-diffall
     git checkout tags/<tag_name> -b <branch_name>
     git checkout -b <branch_name> remotes/origin/***
 
+* git checkout 
+git checkout
+对于 git2.23 之前的版本，可以使用 git checkout 命令实现上述需求。
+
+git checkout dev -- dir2/f2.txt
+复制 dev 分支的 dir2/f2.txt 文件到当前分支。
+
+命令中的 dev 是分支名，也可以是任意一次 commit 的 hash，或者其他 tree-ish。
+
+在 git 的文档里，git checkout 的功能描述：「Switch branches or restore working tree files」。它做的事情太多了，所以在 git2.23 以及之后的版本，它被「拆分」了：切换分支的工作由 git switch 命令来做，恢复文件的工作由 git restore 来做。
+
+git restore
+git restore -s dev -- dir2/f2.txt
+跟上面一样，-s 的参数值可以是分支名，commit hash 或其他任何 tree-ish 值。
+
+跟上面的命令不同的地方在于，执行完这个命令之后，此时在 master 分支，dir/f2.txt 文件的还没有处于「暂存」(staged)状态。
 * tags?
 # list all tags
 git tag

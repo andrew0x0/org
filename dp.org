@@ -50,3 +50,31 @@ center_takeover
 **** remote_takeover_status
 **** remote_takeover_running
 *** remote_takeover_stop
+* gnss_adapter.cpp
+** main
+*** config_ads2_gnss_rtk
+**** http_client_init
+**** rtk_config_to_json_string
+*****     
+    cJSON *root = cJSON_CreateObject();
+    cJSON *location = cJSON_CreateString(req_location);
+    cJSON_AddItemToObject(root, "location", location);
+    cJSON *longitude_deg = cJSON_CreateNumber(req_longitude_deg);
+    cJSON_AddItemToObject(root, "longitude_deg", longitude_deg);
+    cJSON *latitude_deg = cJSON_CreateNumber(req_latitude_deg);
+    cJSON_AddItemToObject(root, "latitude_deg", latitude_deg);
+    cJSON *rtk_request = cJSON_CreateString(req_rtk_request);
+    cJSON_AddItemToObject(root, "rtk_request", rtk_request);
+    char *json_string = cJSON_Print(root);
+
+**** http_client_post
+**** json_string_to_rtk_config
+**** check_rtk_config_valid
+* lidar config parse
+** lidar_node.cpp main
+*** LidarNode
+**** common::proto::readProtoTextFile
+*** run
+****  ParserFactory::CreateParser
+**** ParserPadar64(config)
+***** Parser(config)

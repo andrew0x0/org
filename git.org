@@ -120,7 +120,7 @@ git config –global alias.diffall git-diffall
     git checkout -b <branch_name> remotes/origin/***
 
 * git checkout 
-git checkout
+  git checkout
 对于 git2.23 之前的版本，可以使用 git checkout 命令实现上述需求。
 
 git checkout dev -- dir2/f2.txt
@@ -210,3 +210,41 @@ alias ip="curl -i http://ipinfo.io"
 2) sudo apt install git
 3)  ssh-add ~/.ssh/id_
 4) ssh -T git@github.com
+* git commit time
+git commit --amend  --date="commit_time"
+git commit --amend --date="$(date -R)" 
+* git stash
+1. stash当前修改
+git stash会把所有未提交的修改（包括暂存的和非暂存的）都保存起来，用于后续恢复当前工作目录。
+比如下面的中间状态，通过git stash命令推送一个新的储藏，当前的工作目录就干净了。
+实际应用中推荐给每个stash加一个message，用于记录版本，使用git stash save取代git stash命令。示例如下：
+2. 重新应用缓存的stash
+git stash pop命令恢复之前缓存的工作目录
+git stash apply命令，将缓存堆栈中的stash多次应用到工作目录中，但并不删除stash拷贝。
+3. 查看现有stash
+可以使用git stash list命令
+4. 移除stash
+可以使用git stash drop命令，后面可以跟着stash名字
+5. 查看指定stash的diff
+可以使用git stash show命令，后面可以跟着stash名字
+在该命令后面添加-p或--patch可以查看特定stash的全部diff
+6. 从stash创建分支
+如果你储藏了一些工作，暂时不去理会，然后继续在你储藏工作的分支上工作，你在重新应用工作时可能会碰到一些问题。如果尝试应用的变更是针对一个你那之后修改过的文件，你会碰到一个归并冲突并且必须去化解它。如果你想用更方便的方法来重新检验你储藏的变更，你可以运行 git stash branch，这会创建一个新的分支，检出你储藏工作时的所处的提交，重新应用你的工作，如果成功，将会丢弃储藏。
+7. 暂存未跟踪或忽略的文件
+默认情况下，git stash会缓存下列文件：
+
+添加到暂存区的修改（staged changes）
+Git跟踪的但并未添加到暂存区的修改（unstaged changes）
+但不会缓存一下文件：
+
+在工作目录中新的文件（untracked files）
+被忽略的文件（ignored files）
+
+git stash命令提供了参数用于缓存上面两种类型的文件。使用-u或者--include-untracked可以stash untracked文件。使用-a或者--all命令可以stash当前目录下的所有修改。
+* git index
+如果你想把一个文件从版本控制中移除，并且保留本地的文件，首先需要把这个文件加入到gitignore文件中。然后执行以下命令就可以了。
+
+git rm file_path --cached
+一种是 git rm --cached "文件路径"，不删除物理文件，仅将该文件从缓存中删除；
+
+一种是 git rm --f  "文件路径"，不仅将该文件从缓存中删除，还会将物理文件删除（不会回收到垃圾桶）。

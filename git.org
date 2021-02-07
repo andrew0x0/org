@@ -248,3 +248,7 @@ git rm file_path --cached
 一种是 git rm --cached "文件路径"，不删除物理文件，仅将该文件从缓存中删除；
 
 一种是 git rm --f  "文件路径"，不仅将该文件从缓存中删除，还会将物理文件删除（不会回收到垃圾桶）。
+* git pre-commit
+https://raw.githubusercontent.com/andrewseidl/githook-clang-format/master/clang-format.hook
+clang-format -style=google -dump-config > .clang-format
+git commit --amend --author "yuguo <yuguo@deeproute.ai>"

@@ -24,3 +24,6 @@ cd /usr/local/emacs/share/applications
 把下面这个文件复制到
 cp emacs.desktop /usr/share/applications/
 之后注销重新登录一下就可以找到图标了
+
+Emacs自带 c-guess-buffer-no-install 命令可以根据当前文件的内容推断出一些对齐规则。
+通过 c-guess-view 命令可以查看推断出来的对齐规则，然后根据我们自己的需要酌情修改。
